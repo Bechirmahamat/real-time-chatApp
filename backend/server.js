@@ -3,19 +3,27 @@ dotenv.config()
 import 'express-async-errors'
 import express from 'express'
 
+import cookieParser from 'cookie-parser'
 import { connectToDB } from './db/connection.js'
 import notFoundMiddleware from './middlewares/not-found.js'
 import errorHandlerMiddleware from './middlewares/errorHandler.js'
 import authRouter from './routes/authRoutes.js'
+import messageRouter from './routes/message.route.js'
+import userRouter from './routes/user.routes.js'
+import { protectedRoute } from './middlewares/protectedRoute.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
 // important middlewares
 app.use(express.json())
+app.use(cookieParser())
 
-// routes
+// public routes
 app.use('/api/auth', authRouter)
+// privates routes
+app.use('/api/message', protectedRoute, messageRouter)
+app.use('/api/users', protectedRoute, userRouter)
 
 //setting appMiddleware
 app.use(notFoundMiddleware)

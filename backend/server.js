@@ -4,6 +4,7 @@ import 'express-async-errors'
 import express from 'express'
 
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 import { connectToDB } from './db/connection.js'
 import notFoundMiddleware from './middlewares/not-found.js'
 import errorHandlerMiddleware from './middlewares/errorHandler.js'
@@ -16,6 +17,12 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 // important middlewares
+app.use(
+    cors({
+        origin: 'http://localhost:3000',
+        optionsSuccessStatus: 200,
+    })
+)
 app.use(express.json())
 app.use(cookieParser())
 

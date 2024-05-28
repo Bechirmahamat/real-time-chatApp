@@ -29,7 +29,7 @@ export const login = async (req, res) => {
 }
 export const signup = async (req, res) => {
     const { username, gender } = req.body
-
+    // console.log(req)
     const avatar = `https://avatar.iran.liara.run/public/${
         gender === 'female' ? 'girl' : 'boy'
     }?username=${username}`
@@ -48,6 +48,8 @@ export const signup = async (req, res) => {
     res.status(200).json({
         _id: user._id,
         username: user.username,
+        gender: user.gender,
+        avatar: user.avatar,
         fullName: user.fullName,
         joinAt: user.createdAt,
         token: token,

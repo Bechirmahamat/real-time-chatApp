@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import CustomAPIError from './../errors/customError.js'
 
 export const protectedRoute = (req, res, next) => {
     try {

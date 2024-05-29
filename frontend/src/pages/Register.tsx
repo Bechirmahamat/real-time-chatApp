@@ -1,11 +1,12 @@
 import { ChangeEvent, useState } from 'react'
-import { Form, Link } from 'react-router-dom'
+import { Form, Link, Navigate, redirect, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import FormButton from '../components/FormButton'
 import FormInput from '../components/FormInput'
 
 import { register } from './../../hooks/api'
 import toast from 'react-hot-toast'
+import { useGlobalContext } from '../GlobalContext'
 
 const registerSchema = z.object({
     username: z
@@ -22,6 +23,8 @@ const registerSchema = z.object({
 })
 
 const Register = () => {
+    const { setUser, setIsLogged } = useGlobalContext()
+    const navigate = useNavigate()
     const [values, setValues] = useState<{
         username: string
         password: string
@@ -51,8 +54,8 @@ const Register = () => {
         if (name === 'password' && value.length > 3 && errors.password) {
             setErrors((prevErrors) => ({ ...prevErrors, password: '' }))
         }
-        if (name === 'password' && value.length > 3 && errors.password) {
-            setErrors((prevErrors) => ({ ...prevErrors, password: '' }))
+        if (name === 'fullName' && value.length > 3 && errors.fullName) {
+            setErrors((prevErrors) => ({ ...prevErrors, fullName: '' }))
         }
     }
 
@@ -89,8 +92,17 @@ const Register = () => {
 
         try {
             const data = await register(values)
-            console.log(data)
-            // Handle successful login
+            if (data) {
+                setUser({ ...data })
+                setIsLogged(true)
+                setValues({
+                    password: '',
+                    username: '',
+                    fullName: '',
+                    gender: 'male',
+                })
+                return navigate('/')
+            }
         } catch (error: any) {
             toast.error(error?.message)
         } finally {
@@ -102,10 +114,10 @@ const Register = () => {
         <div className='flex-1 w-full flex justify-center items-center min-h-screen'>
             <Form
                 onSubmit={onSubmit}
-                className='w-10/12 shadow-md sm:max-w-[420px] mx-auto border-1 border flex flex-col gap-y-3 rounded-xl p-6 border-neutral'
+                className='w-10/12 bg-neutral-700 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 shadow-md sm:max-w-[420px] mx-auto border-1 border flex flex-col gap-y-3 rounded-xl p-6 border-neutral'
             >
                 <h4 className='text-center mb-4 font-semibold tracking-wider text-lg'>
-                    Login
+                    Register
                 </h4>
                 <FormInput
                     name='fullName'

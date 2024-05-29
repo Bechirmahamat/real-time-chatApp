@@ -1,11 +1,12 @@
 import { ChangeEvent, useState } from 'react'
-import { Form, Link } from 'react-router-dom'
+import { Form, Link, Navigate, redirect, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import FormButton from '../components/FormButton'
 import FormInput from '../components/FormInput'
 
 import { login } from './../../hooks/api'
 import toast from 'react-hot-toast'
+import { useGlobalContext } from '../GlobalContext'
 
 const loginSchema = z.object({
     username: z
@@ -17,6 +18,8 @@ const loginSchema = z.object({
 })
 
 const Login = () => {
+    const { setUser, setIsLogged } = useGlobalContext()
+    const navigate = useNavigate()
     const [values, setValues] = useState<{
         username: string
         password: string
@@ -67,9 +70,13 @@ const Login = () => {
         formData.append('password', values.password)
 
         try {
-            const data = await login(formData)
-            console.log(data)
-            // Handle successful login
+            const data = await login(values)
+            if (data) {
+                setUser({ ...data })
+                setIsLogged(true)
+                setValues({ password: '', username: '' })
+                return navigate('/')
+            }
         } catch (error: any) {
             toast.error(error?.message)
         } finally {

@@ -3,6 +3,7 @@ dotenv.config()
 import 'express-async-errors'
 import express from 'express'
 
+import { app, server } from './socket/socket.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import { connectToDB } from './db/connection.js'
@@ -12,11 +13,9 @@ import authRouter from './routes/authRoutes.js'
 import messageRouter from './routes/message.route.js'
 import userRouter from './routes/user.routes.js'
 import { protectedRoute } from './middlewares/protectedRoute.js'
-
-const app = express()
 const PORT = process.env.PORT || 5000
 
-// important middlewares
+// important app  middlewares
 app.use(
     cors({
         origin: 'http://localhost:3000',
@@ -41,7 +40,7 @@ const startServer = async () => {
     try {
         await connectToDB(process.env.MONGO_URI)
         console.log('connect to DB')
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log('server is listen on port ' + PORT)
         })
     } catch (error) {
